@@ -30,7 +30,7 @@
  */
 import XHRLoader from './XHRLoader';
 import FetchLoader from './FetchLoader';
-import {HTTPRequest} from '../vo/metrics/HTTPRequest';
+import { HTTPRequest } from '../vo/metrics/HTTPRequest';
 import FactoryMaker from '../../core/FactoryMaker';
 import DashJSError from '../vo/DashJSError';
 import CmcdModel from '../models/CmcdModel';
@@ -96,7 +96,7 @@ function HTTPLoader(cfg) {
         const request = config.request;
         const traces = [];
         let firstProgress = true;
-        let needFailureReport = true;
+        let needFailureReport = false;
         let requestStartTime = new Date();
         let lastTraceTime = requestStartTime;
         let lastTraceReceivedCount = 0;
@@ -106,7 +106,7 @@ function HTTPLoader(cfg) {
             throw new Error('config object is not correct or missing');
         }
 
-        const handleLoaded = function (success) {
+        const handleLoaded = function(success) {
             needFailureReport = false;
 
             request.requestStartDate = requestStartTime;
@@ -127,7 +127,7 @@ function HTTPLoader(cfg) {
             }
         };
 
-        const onloadend = function () {
+        const onloadend = function() {
             if (requests.indexOf(httpRequest) === -1) {
                 return;
             } else {
@@ -152,10 +152,10 @@ function HTTPLoader(cfg) {
 
                     }
 
-                    //remainingAttempts--;
+                    remainingAttempts--;
                     let retryRequest = { config: config };
                     retryRequests.push(retryRequest);
-                    retryRequest.timeout = setTimeout(function () {
+                    retryRequest.timeout = setTimeout(function() {
                         if (retryRequests.indexOf(retryRequest) === -1) {
                             return;
                         } else {
@@ -184,7 +184,7 @@ function HTTPLoader(cfg) {
             }
         };
 
-        const progress = function (event) {
+        const progress = function(event) {
             const currentTime = new Date();
 
             if (firstProgress) {
@@ -217,7 +217,7 @@ function HTTPLoader(cfg) {
             }
         };
 
-        const onload = function () {
+        const onload = function() {
             if (httpRequest.response.status >= 200 && httpRequest.response.status <= 299) {
                 handleLoaded(true);
 
@@ -231,13 +231,13 @@ function HTTPLoader(cfg) {
             }
         };
 
-        const onabort = function () {
+        const onabort = function() {
             if (config.abort) {
                 config.abort(request);
             }
         };
 
-        const ontimeout = function (event) {
+        const ontimeout = function(event) {
             let timeoutMessage;
             if (event.lengthComputable) {
                 let percentageComplete = (event.loaded / event.total) * 100;
@@ -305,7 +305,7 @@ function HTTPLoader(cfg) {
             // delay
             let delayedRequest = { httpRequest: httpRequest };
             delayedRequests.push(delayedRequest);
-            delayedRequest.delayTimeout = setTimeout(function () {
+            delayedRequest.delayTimeout = setTimeout(function() {
                 if (delayedRequests.indexOf(delayedRequest) === -1) {
                     return;
                 } else {

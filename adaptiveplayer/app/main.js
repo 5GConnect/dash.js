@@ -3,97 +3,34 @@
 'use strict';
 
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js').then(function (registration) {
+    navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
         console.log('registered service work : ', registration);
-    }).catch(function (err) {
+    }).catch(function(err) {
         console.log('Registration failed : ', err);
     });
 } else {
     alert('serviceWorker is not supported for this browser !');
 }
 
-//'DashSourcesService',
-var app = angular.module('DashPlayer', ['DashContributorsService', 'DashIFTestVectorsService', 'angular-flot']); /* jshint ignore:line */
+var app = angular.module('DashPlayer', ['angular-flot']); /* jshint ignore:line */
 
-$(document).ready(function () {
+$(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 });
 
-// angular.module('DashSourcesService', ['ngResource']).factory('sources', function ($resource) {
-//     return $resource('./app/sources.json', {}, {
-//         query: {
-//             method: 'GET',
-//             isArray: false
-//         }
-//     });
-// });
 
-angular.module('DashContributorsService', ['ngResource']).factory('contributors', function ($resource) { /* jshint ignore:line */
-    return $resource('app/contributors.json', {}, {
-        query: {
-            method: 'GET',
-            isArray: false
-        }
-    });
-});
-
-angular.module('DashIFTestVectorsService', ['ngResource']).factory('dashifTestVectors', function ($resource) { /* jshint ignore:line */
-    return $resource('https://testassets.dashif.org/dashjs.json', {}, {
-        query: {
-            method: 'GET',
-            isArray: false
-        }
-    });
-});
-
-app.controller('DashController', function ($scope, DownloadService) {
-    let updateNetworkStatus = function () {
-        if (navigator.onLine) {
-            $scope.isOffline = 'ONLINE';
-        } else {
-            $scope.isOffline = 'OFFLINE';
-        }
-        $scope.$apply();
-    };
-    setTimeout(updateNetworkStatus, 0); //init
-    setInterval(updateNetworkStatus, 2000);
-
+app.controller('DashController', function($scope) {
 
     $scope.selectedItem = {
         url: 'http://10.250.2.68/video/range.mpd'
     };
-
-    // sources.query(function (data) {
-    //     $scope.availableStreams = data.items;
-    //     // if no mss package, remove mss samples.
-    //     var MssHandler = dashjs.MssHandler; /* jshint ignore:line */
-    //     if (typeof MssHandler !== 'function') {
-    //         for (var i = $scope.availableStreams.length - 1; i >= 0; i--) {
-    //             if ($scope.availableStreams[i].name === 'Smooth Streaming') {
-    //                 $scope.availableStreams.splice(i, 1);
-    //             }
-    //         }
-    //     }
-
-    //     // DASH Industry Forum Test Vectors
-    //     dashifTestVectors.query(function (data) {
-    //         $scope.availableStreams.splice(7, 0, {
-    //             name: 'DASH Industry Forum Test Vectors',
-    //             submenu: data.items
-    //         });
-    //     });
-    // });
-
-    // contributors.query(function (data) {
-    //     $scope.contributors = data.items;
-    // });
 
     $scope.chartOptions = {
         legend: {
             labelBoxBorderColor: '#ffffff',
             placement: 'outsideGrid',
             container: '#legend-wrapper',
-            labelFormatter: function (label, series) {
+            labelFormatter: function(label, series) {
                 return '<div  style="cursor: pointer;" id="' + series.type + '.' + series.id + '" onclick="legendLabelClickHandler(this)">' + label + '</div>';
             }
         },
@@ -143,7 +80,6 @@ app.controller('DashController', function ($scope, DownloadService) {
     $scope.chartEnabled = true;
     $scope.maxPointsToChart = 30;
     $scope.maxChartableItems = 5;
-    $scope.chartCount = 0;
     $scope.chartData = [];
 
     $scope.chartState = {
@@ -195,35 +131,6 @@ app.controller('DashController', function ($scope, DownloadService) {
 
     $scope.isDynamic = false;
 
-    // metrics
-    $scope.videoBitrate = 0;
-    $scope.videoIndex = 0;
-    $scope.videoPendingIndex = 0;
-    $scope.videoMaxIndex = 0;
-    $scope.videoBufferLength = 0;
-    $scope.videoDroppedFrames = 0;
-    $scope.videoLatencyCount = 0;
-    $scope.videoLatency = '';
-    $scope.videoDownloadCount = 0;
-    $scope.videoDownload = '';
-    $scope.videoRatioCount = 0;
-    $scope.videoRatio = '';
-    $scope.videoLiveLatency = 0;
-
-    $scope.audioBitrate = 0;
-    $scope.audioIndex = 0;
-    $scope.audioPendingIndex = '';
-    $scope.audioMaxIndex = 0;
-    $scope.audioBufferLength = 0;
-    $scope.audioDroppedFrames = 0;
-    $scope.audioLatencyCount = 0;
-    $scope.audioLatency = '';
-    $scope.audioDownloadCount = 0;
-    $scope.audioDownload = '';
-    $scope.audioRatioCount = 0;
-    $scope.audioRatio = '';
-    $scope.audioLiveLatency = 0;
-
     // Starting Options
     $scope.autoPlaySelected = true;
     $scope.loopSelected = true;
@@ -259,7 +166,7 @@ app.controller('DashController', function ($scope, DownloadService) {
     //
     ////////////////////////////////////////
     let reqConfig = new XMLHttpRequest();
-    reqConfig.onload = function () {
+    reqConfig.onload = function() {
         if (reqConfig.status === 200) {
             let config = JSON.parse(reqConfig.responseText);
             if ($scope.player) {
@@ -296,10 +203,10 @@ app.controller('DashController', function ($scope, DownloadService) {
     reqConfig.setRequestHeader('Content-type', 'application/json');
     reqConfig.send();
 
-    $scope.player.on(dashjs.MediaPlayer.events.ERROR, function (e) { /* jshint ignore:line */
+    $scope.player.on(dashjs.MediaPlayer.events.ERROR, function(e) { /* jshint ignore:line */
         //use the new error callback
         if (!e.event) {
-            $scope.$apply(function () {
+            $scope.$apply(function() {
                 $scope.error = e.error.message;
                 $scope.errorType = 'Dash.js :' + e.error.code;
                 switch (e.error.code) {
@@ -327,9 +234,9 @@ app.controller('DashController', function ($scope, DownloadService) {
                     case dashjs.MediaPlayer.errors.MANIFEST_ERROR_ID_PARSE:
                     case dashjs.MediaPlayer.errors.MANIFEST_ERROR_ID_NOSTREAMS:
                     case dashjs.MediaPlayer.errors.TIMED_TEXT_ERROR_ID_PARSE:
-                    // mss errors
+                        // mss errors
                     case dashjs.MediaPlayer.errors.MSS_NO_TFRF_CODE:
-                    // protection errors
+                        // protection errors
                     case dashjs.MediaPlayer.errors.MEDIA_KEYERR_CODE:
                     case dashjs.MediaPlayer.errors.MEDIA_KEYERR_UNKNOWN_CODE:
                     case dashjs.MediaPlayer.errors.MEDIA_KEYERR_CLIENT_CODE:
@@ -380,76 +287,52 @@ app.controller('DashController', function ($scope, DownloadService) {
     $scope.controlbar.disable();
     $scope.version = $scope.player.getVersion();
 
-    $scope.player.on(dashjs.MediaPlayer.events.MANIFEST_LOADED, function (e) { /* jshint ignore:line */
+    $scope.player.on(dashjs.MediaPlayer.events.MANIFEST_LOADED, function(e) { /* jshint ignore:line */
         $scope.isDynamic = e.data.type === 'dynamic';
     }, $scope);
 
-    $scope.player.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_REQUESTED, function (e) { /* jshint ignore:line */
+    $scope.player.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_REQUESTED, function(e) { /* jshint ignore:line */
         $scope[e.mediaType + 'Index'] = e.oldQuality + 1;
         $scope[e.mediaType + 'PendingIndex'] = e.newQuality + 1;
         $scope.plotPoint('pendingIndex', e.mediaType, e.newQuality + 1, getTimeForPlot());
         $scope.safeApply();
     }, $scope);
 
-    $scope.player.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_RENDERED, function (e) { /* jshint ignore:line */
+    $scope.player.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_RENDERED, function(e) { /* jshint ignore:line */
         $scope[e.mediaType + 'Index'] = e.newQuality + 1;
         $scope[e.mediaType + 'PendingIndex'] = e.newQuality + 1;
         $scope.plotPoint('index', e.mediaType, e.newQuality + 1, getTimeForPlot());
         $scope.safeApply();
     }, $scope);
 
-    $scope.player.on(dashjs.MediaPlayer.events.PERIOD_SWITCH_COMPLETED, function (e) { /* jshint ignore:line */
+    $scope.player.on(dashjs.MediaPlayer.events.PERIOD_SWITCH_COMPLETED, function(e) { /* jshint ignore:line */
         $scope.streamInfo = e.toStreamInfo;
     }, $scope);
 
-    $scope.player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, function (e) { /* jshint ignore:line */
+    $scope.player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, function(e) { /* jshint ignore:line */
         stopMetricsInterval();
 
         $scope.videoQualities = $scope.player.getBitrateInfoListFor('video');
-        $scope.chartCount = 0;
-        $scope.metricsTimer = setInterval(function () {
-            updateMetrics('video');
-            updateMetrics('audio');
-            $scope.chartCount++;
+
+        $scope.metricsTimer = setInterval(function() {
+            updateVideoMetrics();
         }, $scope.updateMetricsInterval);
-
-        var eventPoller = setInterval(function () {
-            var streamInfo = $scope.player.getActiveStream().getStreamInfo();
-            var dashMetrics = $scope.player.getDashMetrics();
-            var dashAdapter = $scope.player.getDashAdapter();
-
-            if (dashMetrics && streamInfo) {
-                const periodIdx = streamInfo.index;
-                var repSwitch = dashMetrics.getCurrentRepresentationSwitch('video', true);
-                var bufferLevel = dashMetrics.getCurrentBufferLevel('video', true);
-                var bitrate = repSwitch ? Math.round(dashAdapter.getBandwidthForRepresentation(repSwitch.to, periodIdx) / 1000) : NaN;
-                var adaptation = dashAdapter.getAdaptationForType(periodIdx, 'video', streamInfo)
-                var frameRate = adaptation.Representation_asArray.find(function (rep) {
-                    return rep.id === repSwitch.to
-                }).frameRate;
-                var bitrateInfo = $scope.player.getBitrateInfoListFor('video')[$scope.player.getQualityFor('video')]
-                document.getElementById('videoquality').innerText = `${bitrateInfo.width}x${bitrateInfo.height} px`
-                document.getElementById('bufferLevel').innerText = bufferLevel + " secs";
-                document.getElementById('framerate').innerText = frameRate + " fps";
-                document.getElementById('reportedBitrate').innerText = bitrate + " Kbps";
-            }
-        }, 1000);
     }, $scope);
 
-    $scope.player.on(dashjs.MediaPlayer.events.PLAYBACK_ENDED, function (e) { /* jshint ignore:line */
+    $scope.player.on(dashjs.MediaPlayer.events.PLAYBACK_ENDED, function(e) { /* jshint ignore:line */
         if ($('#loop-cb').is(':checked') &&
             $scope.player.getActiveStream().getStreamInfo().isLast) {
             $scope.doLoad();
         }
     }, $scope);
 
-    $scope.player.on(dashjs.MediaPlayer.events.KEY_SYSTEM_SELECTED, function (e) { /* jshint ignore:line */
+    $scope.player.on(dashjs.MediaPlayer.events.KEY_SYSTEM_SELECTED, function(e) { /* jshint ignore:line */
         if (e.data) {
             $scope.selectedKeySystem = e.data.keySystem.systemString;
         }
     }, $scope);
 
-    $scope.player.on(dashjs.MediaPlayer.events.KEY_SESSION_CREATED, function (e) { /* jshint ignore:line */
+    $scope.player.on(dashjs.MediaPlayer.events.KEY_SESSION_CREATED, function(e) { /* jshint ignore:line */
         if (e.data) {
             var session = e.data;
             if (session.getSessionType() === 'persistent-license') {
@@ -460,38 +343,20 @@ app.controller('DashController', function ($scope, DownloadService) {
 
     ////////////////////////////////////////
     //
-    // Download setup
-    //
-    ////////////////////////////////////////
-    // $scope.offlinePlayer = dashjs.MediaPlayer().create(); /* jshint ignore:line */
-    // $scope.offlinePlayer.initialize($scope.video, null, $scope.autoPlaySelected);
-
-    // $scope.downloads = DownloadService.getDownloads();
-    // DownloadService.init($scope.offlinePlayer);
-
-    // $scope.offlinePlayer.on(dashjs.MediaPlayer.events.OFFLINE_RECORD_LOADEDMETADATA, function (e) { /* jshint ignore:line */
-    //     console.log(JSON.stringify(e));
-    //     $scope.mediaInfos = e.mediaInfos;
-    //     $scope.manifestId = e.id;
-    //     $scope.showRepresentationModal();
-    // }, $scope);
-
-    ////////////////////////////////////////
-    //
     // General Player Methods
     //
     ////////////////////////////////////////
 
-    $scope.onChartEnableButtonClick = function () {
+    $scope.onChartEnableButtonClick = function() {
         $scope.chartEnabled = !$scope.chartEnabled;
         $('#chart-wrapper').fadeTo(500, $scope.chartEnabled ? 1 : 0.3);
     };
 
-    $scope.toggleAutoPlay = function () {
+    $scope.toggleAutoPlay = function() {
         $scope.player.setAutoPlay($scope.autoPlaySelected);
     };
 
-    $scope.changeABRStrategy = function (strategy) {
+    $scope.changeABRStrategy = function(strategy) {
         $scope.player.updateSettings({
             'streaming': {
                 'abr': {
@@ -501,7 +366,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         });
     };
 
-    $scope.toggleUseCustomABRRules = function () {
+    $scope.toggleUseCustomABRRules = function() {
         $scope.player.updateSettings({
             'streaming': {
                 'abr': {
@@ -519,7 +384,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         }
     };
 
-    $scope.toggleFastSwitch = function () {
+    $scope.toggleFastSwitch = function() {
         $scope.player.updateSettings({
             'streaming': {
                 'buffer': {
@@ -529,7 +394,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         });
     };
 
-    $scope.toggleVideoAutoSwitch = function () {
+    $scope.toggleVideoAutoSwitch = function() {
         $scope.player.updateSettings({
             'streaming': {
                 'abr': {
@@ -541,7 +406,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         });
     };
 
-    $scope.toggleScheduleWhilePaused = function () {
+    $scope.toggleScheduleWhilePaused = function() {
         $scope.player.updateSettings({
             'streaming': {
                 'scheduling': {
@@ -551,7 +416,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         });
     };
 
-    $scope.toggleLocalStorage = function () {
+    $scope.toggleLocalStorage = function() {
         $scope.player.updateSettings({
             'streaming': {
                 'lastBitrateCachingInfo': {
@@ -564,7 +429,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         });
     };
 
-    $scope.toggleJumpGaps = function () {
+    $scope.toggleJumpGaps = function() {
         $scope.player.updateSettings({
             'streaming': {
                 'gaps': {
@@ -574,7 +439,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         });
     };
 
-    $scope.togglelowLatencyMode = function () {
+    $scope.togglelowLatencyMode = function() {
         $scope.player.updateSettings({
             'streaming': {
                 'lowLatencyEnabled': $scope.lowLatencyModeSelected
@@ -582,19 +447,19 @@ app.controller('DashController', function ($scope, DownloadService) {
         });
     };
 
-    $scope.setStream = function (item) {
+    $scope.setStream = function(item) {
         $scope.selectedItem = JSON.parse(JSON.stringify(item));
     };
 
-    $scope.toggleOptionsGutter = function (bool) {
+    $scope.toggleOptionsGutter = function(bool) {
         $scope.optionsGutter = bool;
     };
 
-    $scope.selectVideoQuality = function (quality) {
+    $scope.selectVideoQuality = function(quality) {
         $scope.player.setQualityFor('video', quality);
     };
 
-    $scope.doLoad = function () {
+    $scope.doLoad = function() {
         $scope.initSession();
 
         var protData = {};
@@ -690,17 +555,17 @@ app.controller('DashController', function ($scope, DownloadService) {
         $scope.controlbar.enable();
     };
 
-    $scope.doStop = function () {
+    $scope.doStop = function() {
         $scope.player.attachSource(null);
         $scope.controlbar.reset();
         stopMetricsInterval();
     };
 
-    $scope.changeTrackSwitchMode = function (mode, type) {
+    $scope.changeTrackSwitchMode = function(mode, type) {
         $scope.player.setTrackSwitchModeFor(type, mode);
     };
 
-    $scope.setLogLevel = function () {
+    $scope.setLogLevel = function() {
         var level = $('input[name=\'log-level\']:checked').val();
         switch (level) {
             case 'none':
@@ -734,24 +599,24 @@ app.controller('DashController', function ($scope, DownloadService) {
         }
     };
 
-    $scope.hasLogo = function (item) {
+    $scope.hasLogo = function(item) {
         return (item.hasOwnProperty('logo') && item.logo);
     };
 
-    $scope.getChartButtonLabel = function () {
+    $scope.getChartButtonLabel = function() {
         return $scope.chartEnabled ? 'Disable' : 'Enable';
     };
 
-    $scope.getOptionsButtonLabel = function () {
+    $scope.getOptionsButtonLabel = function() {
         return $scope.optionsGutter ? 'Hide Options' : 'Show Options';
     };
 
-    $scope.setDrmKeySystem = function (item) {
+    $scope.setDrmKeySystem = function(item) {
         $scope.drmKeySystem = item;
     };
 
     // from: https://gist.github.com/siongui/4969449
-    $scope.safeApply = function (fn) {
+    $scope.safeApply = function(fn) {
         var phase = this.$root.$$phase;
         if (phase == '$apply' || phase == '$digest')
             this.$eval(fn);
@@ -764,83 +629,12 @@ app.controller('DashController', function ($scope, DownloadService) {
     // Metrics
     //
     ////////////////////////////////////////
-    $scope.initSession = function () {
+    $scope.initSession = function() {
         $scope.clearChartData();
         $scope.sessionStartTime = new Date().getTime() / 1000;
     };
 
-    function calculateHTTPMetrics(type, requests) {
-        var latency = {};
-        var download = {};
-        var ratio = {};
-
-        var requestWindow = requests.slice(-20).filter(function (req) {
-            return req.responsecode >= 200 && req.responsecode < 300 && req.type === 'MediaSegment' && req._stream === type && !!req._mediaduration;
-        }).slice(-4);
-
-        if (requestWindow.length > 0) {
-            var latencyTimes = requestWindow.map(function (req) {
-                return Math.abs(req.tresponse.getTime() - req.trequest.getTime()) / 1000;
-            });
-
-            latency[type] = {
-                average: latencyTimes.reduce(function (l, r) {
-                    return l + r;
-                }) / latencyTimes.length,
-                high: latencyTimes.reduce(function (l, r) {
-                    return l < r ? r : l;
-                }),
-                low: latencyTimes.reduce(function (l, r) {
-                    return l < r ? l : r;
-                }),
-                count: latencyTimes.length
-            };
-
-            var downloadTimes = requestWindow.map(function (req) {
-                return Math.abs(req._tfinish.getTime() - req.tresponse.getTime()) / 1000;
-            });
-
-            download[type] = {
-                average: downloadTimes.reduce(function (l, r) {
-                    return l + r;
-                }) / downloadTimes.length,
-                high: downloadTimes.reduce(function (l, r) {
-                    return l < r ? r : l;
-                }),
-                low: downloadTimes.reduce(function (l, r) {
-                    return l < r ? l : r;
-                }),
-                count: downloadTimes.length
-            };
-
-            var durationTimes = requestWindow.map(function (req) {
-                return req._mediaduration;
-            });
-
-            ratio[type] = {
-                average: (durationTimes.reduce(function (l, r) {
-                    return l + r;
-                }) / downloadTimes.length) / download[type].average,
-                high: durationTimes.reduce(function (l, r) {
-                    return l < r ? r : l;
-                }) / download[type].low,
-                low: durationTimes.reduce(function (l, r) {
-                    return l < r ? l : r;
-                }) / download[type].high,
-                count: durationTimes.length
-            };
-
-            return {
-                latency: latency,
-                download: download,
-                ratio: ratio
-            };
-
-        }
-        return null;
-    }
-
-    $scope.clearChartData = function () {
+    $scope.clearChartData = function() {
         for (var key in $scope.chartState) {
             for (var i in $scope.chartState[key]) {
                 $scope.chartState[key][i].data.length = 0;
@@ -848,7 +642,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         }
     };
 
-    $scope.plotPoint = function (name, type, value, time) {
+    $scope.plotPoint = function(name, type, value, time) {
         if ($scope.chartEnabled) {
             var specificChart = $scope.chartState[type];
             if (specificChart) {
@@ -861,7 +655,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         }
     };
 
-    $scope.enableChartByName = function (id, type) {
+    $scope.enableChartByName = function(id, type) {
         // enable stat item
         if ($scope.chartState[type][id].selected) {
             // block stat item if too many already.
@@ -903,54 +697,29 @@ app.controller('DashController', function ($scope, DownloadService) {
         return Math.max(now - $scope.sessionStartTime, 0);
     }
 
-    function updateMetrics(type) {
+    function updateVideoMetrics() {
+        var streamInfo = $scope.player.getActiveStream().getStreamInfo();
         var dashMetrics = $scope.player.getDashMetrics();
         var dashAdapter = $scope.player.getDashAdapter();
 
-        if (dashMetrics && $scope.streamInfo) {
-            var periodIdx = $scope.streamInfo.index;
-
-            var maxIndex = dashAdapter.getMaxIndexForBufferType(type, periodIdx);
-            var repSwitch = dashMetrics.getCurrentRepresentationSwitch(type, true);
-            var bufferLevel = dashMetrics.getCurrentBufferLevel(type, true);
-            var index = $scope.player.getQualityFor(type);
-
+        if (dashMetrics && streamInfo) {
+            const periodIdx = streamInfo.index;
+            var repSwitch = dashMetrics.getCurrentRepresentationSwitch('video', true);
+            var bufferLevel = dashMetrics.getCurrentBufferLevel('video', true);
             var bitrate = repSwitch ? Math.round(dashAdapter.getBandwidthForRepresentation(repSwitch.to, periodIdx) / 1000) : NaN;
-            var droppedFramesMetrics = dashMetrics.getCurrentDroppedFrames();
-            var droppedFPS = droppedFramesMetrics ? droppedFramesMetrics.droppedFrames : 0;
-            var liveLatency = 0;
-            if ($scope.isDynamic) {
-                liveLatency = $scope.player.getCurrentLiveLatency();
-            }
-
-            $scope[type + 'BufferLength'] = bufferLevel;
-            $scope[type + 'MaxIndex'] = maxIndex;
-            $scope[type + 'Bitrate'] = bitrate;
-            $scope[type + 'DroppedFrames'] = droppedFPS;
-            $scope[type + 'LiveLatency'] = liveLatency;
-
-            var httpMetrics = calculateHTTPMetrics(type, dashMetrics.getHttpRequests(type));
-            if (httpMetrics) {
-                $scope[type + 'Download'] = httpMetrics.download[type].low.toFixed(2) + ' | ' + httpMetrics.download[type].average.toFixed(2) + ' | ' + httpMetrics.download[type].high.toFixed(2);
-                $scope[type + 'Latency'] = httpMetrics.latency[type].low.toFixed(2) + ' | ' + httpMetrics.latency[type].average.toFixed(2) + ' | ' + httpMetrics.latency[type].high.toFixed(2);
-                $scope[type + 'Ratio'] = httpMetrics.ratio[type].low.toFixed(2) + ' | ' + httpMetrics.ratio[type].average.toFixed(2) + ' | ' + httpMetrics.ratio[type].high.toFixed(2);
-            }
-
-            if ($scope.chartCount % 2 === 0) {
-                var time = getTimeForPlot();
-                $scope.plotPoint('buffer', type, bufferLevel, time);
-                $scope.plotPoint('index', type, index, time);
-                $scope.plotPoint('bitrate', type, bitrate, time);
-                $scope.plotPoint('droppedFPS', type, droppedFPS, time);
-                $scope.plotPoint('liveLatency', type, liveLatency, time);
-
-                if (httpMetrics) {
-                    $scope.plotPoint('download', type, httpMetrics.download[type].average.toFixed(2), time);
-                    $scope.plotPoint('latency', type, httpMetrics.latency[type].average.toFixed(2), time);
-                    $scope.plotPoint('ratio', type, httpMetrics.ratio[type].average.toFixed(2), time);
-                }
-                $scope.safeApply();
-            }
+            var adaptation = dashAdapter.getAdaptationForType(periodIdx, 'video', streamInfo)
+            var frameRate = adaptation.Representation_asArray.find(function(rep) {
+                return rep.id === repSwitch.to
+            }).frameRate;
+            var time = getTimeForPlot();
+            var bitrateInfo = $scope.player.getBitrateInfoListFor('video')[$scope.player.getQualityFor('video')]
+            document.getElementById('videoquality').innerText = `${bitrateInfo.width}x${bitrateInfo.height} px`
+            document.getElementById('bufferLevel').innerText = bufferLevel + " secs";
+            document.getElementById('framerate').innerText = frameRate + " fps";
+            document.getElementById('reportedBitrate').innerText = bitrate + " Kbps";
+            $scope.plotPoint('buffer', 'video', bufferLevel, time);
+            $scope.plotPoint('bitrate', 'video', bitrate, time);
+            $scope.safeApply();
         }
     }
 
@@ -961,7 +730,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         }
     }
 
-    $scope.initChartingByMediaType = function (type) {
+    $scope.initChartingByMediaType = function(type) {
         var arr = $scope.chartState[type];
         for (var key in arr) {
             var obj = arr[key];
@@ -1002,7 +771,7 @@ app.controller('DashController', function ($scope, DownloadService) {
 
         function getUrlVars() {
             var vars = {};
-            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
                 vars[key] = value;
             });
             return vars;
@@ -1026,8 +795,7 @@ app.controller('DashController', function ($scope, DownloadService) {
         if (vars && vars.hasOwnProperty('stream')) {
             try {
                 item = JSON.parse(atob(vars.stream));
-            } catch (e) {
-            }
+            } catch (e) {}
         }
 
 
@@ -1057,91 +825,6 @@ app.controller('DashController', function ($scope, DownloadService) {
             }
         }
     })();
-
-    ////////////////////////////////////////
-    //
-    // Offline
-    //
-    ////////////////////////////////////////
-
-    $scope.player.on(dashjs.MediaPlayer.events.OFFLINE_RECORD_STARTED, function (e) { /* jshint ignore:line */
-        $scope.successMessage = e.message;
-        $('.alert.alert-success').show();
-        $('.alert.alert-success').fadeTo(2500, 500).slideUp(500, function () {
-            $('.alert.alert-success').slideUp(500);
-        });
-    }, $scope);
-
-    $scope.player.on(dashjs.MediaPlayer.events.OFFLINE_RECORD_FINISHED, function (e) { /* jshint ignore:line */
-        $scope.successMessage = e.message;
-        $('.alert.alert-success').show();
-        $('.alert.alert-success').fadeTo(2500, 500).slideUp(500, function () {
-            $('.alert.alert-success').slideUp(500);
-        });
-    }, $scope);
-
-    $scope.player.on(dashjs.MediaPlayer.events.OFFLINE_RECORD_STOPPED, function (e) { /* jshint ignore:line */
-        $scope.warningMessage = e.message;
-        $('.alert.alert-warning').show();
-        $('.alert.alert-warning').fadeTo(2500, 500).slideUp(500, function () {
-            $('.alert.alert-warning').slideUp(500);
-        });
-    }, $scope);
-
-    $scope.showRepresentationModal = function () {
-        $('#representationModal').modal('show');
-    };
-
-    $scope.hideRepresentationModal = function () {
-        $scope.manifestId = undefined;
-        $scope.mediaInfos = null;
-        $('#representationModal').modal('hide');
-    };
-
-    $scope.getSelectedRepresentations = function () {
-        let representations = {};
-        representations.video = [];
-        $scope.downloadableRepresentations.video.forEach(function (item) {
-            if (item.selected) {
-                representations.video.push(item);
-            }
-        });
-
-        representations.audio = [];
-        $scope.downloadableRepresentations.audio.forEach(function (item) {
-            if (item.selected) {
-                representations.audio.push(item);
-            }
-        });
-
-        representations.text = [];
-        $scope.downloadableRepresentations.text.forEach(function (item) {
-            if (item.selected) {
-                representations.text.push(item);
-            }
-        });
-        representations.fragmentedText = [];
-        $('input[type="checkbox"][name="fragmentedText"]:checked').each(function () {
-            representations.fragmentedText.push($(this).attr('value'));
-        });
-
-        return representations;
-    };
-
-    $scope.getSelectedMediaInfos = function () {
-        let mediaInfos = [];
-        $scope.mediaInfos.forEach(function (mediaInfo) {
-            let selected = false;
-            mediaInfo.bitrateList = mediaInfo.bitrateList.filter(function (bitrate) {
-                selected = selected || bitrate.selected;
-                return bitrate.selected;
-            });
-            if (selected) {
-                mediaInfos.push(mediaInfo);
-            }
-        });
-        return mediaInfos;
-    };
 });
 
 function legendLabelClickHandler(obj) { /* jshint ignore:line */

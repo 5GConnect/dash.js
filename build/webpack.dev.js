@@ -16,10 +16,10 @@ const config = merge(common, {
     devServer: {
         contentBase: path.join(__dirname, '../'),
         open: true,
-        openPage: 'samples/index.html',
+        openPage: 'adaptiveplayer/index.html',
         hot: true,
         compress: true,
-        port: 3000,
+        port: 3001,
         watchOptions: {
             aggregateTimeout: 300,
             poll: 1000

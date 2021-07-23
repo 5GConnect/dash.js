@@ -1,7 +1,8 @@
 body {
-    background: #eee;
+    background: #fff;
     min-width: 320px;
     overflow-x: hidden;
+    height: 100vh;
 }
 
 label input {
@@ -17,13 +18,15 @@ a:hover {
     color: rgba(42, 100, 150, 1);
 }
 
-.container {
-    max-width: 1600px;
+.footer-container {
+    width: 100%;
+    padding-right: 3%;
 }
 
 .btn:focus {
-  outline: none;
+    outline: none;
 }
+
 
 /****************************
     HEADER TITLE BAR
@@ -40,7 +43,8 @@ a:hover {
 
 .top-buttons {
     float: right;
-    margin-right: -20px;;
+    margin-right: -20px;
+    ;
     margin-top: 10px;
 }
 
@@ -56,9 +60,16 @@ a:hover {
     font-size: smaller;
 }
 
+.image {
+    width: 38px;
+    height: 38px;
+}
+
+
 /****************************
         OPTIONS PANEL
 *****************************/
+
 .options-show {
     transition-property: all;
     transition-duration: .5s;
@@ -115,6 +126,7 @@ a:hover {
     margin: 5px;
 }
 
+
 /****************************
     OFFLINE REPRESENTATION
 *****************************/
@@ -123,6 +135,7 @@ a:hover {
     font-weight: bold;
     margin: 5px;
 }
+
 
 /****************************
     MIDDLE ROW VIDEO
@@ -178,19 +191,28 @@ a:hover {
     position: absolute !important;
 }
 
+.metric_container {
+    padding-left: 5%;
+}
+
+#metrics_title {
+    text-align: center;
+}
+
+
 /****************************
         STATS PANELS
 *****************************/
 
 .text-success {
-    color:black !important;
-    font-size: 1.05em ;
+    color: black !important;
+    font-size: 1.05em;
     white-space: nowrap;
     overflow: hidden
 }
 
 .text-primary {
-    color:#428bca;
+    color: #428bca;
     font-weight: 500;
     padding-right: 3px;
 }
@@ -199,7 +221,7 @@ a:hover {
     margin-left: 5px;
 }
 
-.tabs-section .nav > li > a {
+.tabs-section .nav>li>a {
     padding: 10px 11px;
 }
 
@@ -213,6 +235,7 @@ a:hover {
     font-size: 14px;
 }
 
+
 /****************************
     ERROR MODAL
 *****************************/
@@ -222,23 +245,24 @@ a:hover {
     color: white;
 }
 
+
 /****************************
     CHARTING AND CHART TABS
 *****************************/
 
-flot{
+flot {
     display: block;
     width: 100%;
     height: 200px;
 }
 
 #chart-inventory {
-    position:relative;
-    background-color: #ececec;
+    position: relative;
+    background-color: #fff;
 }
 
 .legendLabel {
-    color:black;
+    color: black;
     padding-right: 15px;
     padding-left: 10px;
 }
@@ -250,7 +274,7 @@ flot{
     width: 100%;
 }
 
-div#chart-wrapper{
+div#chart-wrapper {
     padding: 15px;
 }
 
@@ -270,17 +294,21 @@ div#legend-wrapper {
     float: right;
 }
 
+
 /****************************
         FOOTER SECTION
 *****************************/
+
 .footer-text {
-    height: 50px;
-    color: #bdc1c5;
-    display: block;
+    text-align: right;
+    font-size: 18px;
 }
 
 .footer-area {
     background-color: #ffffff;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
 .footer-text img {
@@ -298,18 +326,14 @@ div#legend-wrapper {
     color: #555;
 }
 
+
 /****************************
     MEDIA SCREEN CONTROL
 *****************************/
 
 @media (min-width: 993px) {
-
     #desktop-streams {
         display: table-cell;
-    }
-
-    #mobile-streams {
-        display: none;
     }
 }
 
@@ -317,25 +341,17 @@ div#legend-wrapper {
     .col-md-9 {
         width: 100%;
     }
-
     .col-md-3 {
         width: 100%;
         padding: 0;
         margin-top: 15px;
     }
-
     #desktop-streams {
         display: none;
     }
-
-    #mobile-streams {
-        display: table-cell;
-    }
-
     #big-title {
         display: none;
     }
-
     .legend-row {
         display: none;
     }
@@ -346,6 +362,7 @@ div#legend-wrapper {
         display: none;
     }
 }
+
 
 /****************************
 MOBILE SOURCE MENU MODAL LIST
@@ -358,17 +375,16 @@ MOBILE SOURCE MENU MODAL LIST
     list-style: none;
     padding: 15px;
     font-size: 16px;
-
     -webkit-border-radius: 12px;
     -moz-border-radius: 12px;
     border-radius: 12px;
 }
 
-.modal-list > ul {
+.modal-list>ul {
     padding: 15px;
 }
 
-.modal-list > ul > li {
+.modal-list>ul>li {
     margin-bottom: 20px;
     list-style: none;
     font-size: 20px;
@@ -378,24 +394,26 @@ MOBILE SOURCE MENU MODAL LIST
     border-bottom: 3px solid #999;
 }
 
-.modal-list > ul > li > span {
+.modal-list>ul>li>span {
     font-weight: 900;
     margin-bottom: 8px;
 }
 
-.modal-list > ul > li > ul > li {
+.modal-list>ul>li>ul>li {
     border-top: 1px solid #ccc;
     padding: 6px 0;
 }
 
+
 /****************************
         DESKTOP MENU
 *****************************/
+
 .tooltip-inner {
-    white-space:pre-wrap;
+    white-space: pre-wrap;
 }
 
-.dropdown-menu > li > a {
+.dropdown-menu>li>a {
     cursor: pointer;
 }
 
@@ -403,7 +421,7 @@ MOBILE SOURCE MENU MODAL LIST
     position: relative;
 }
 
-.dropdown-submenu > .dropdown-menu {
+.dropdown-submenu>.dropdown-menu {
     top: 0;
     left: 100%;
     margin-top: -6px;
@@ -413,11 +431,11 @@ MOBILE SOURCE MENU MODAL LIST
     border-radius: 0 6px 6px 6px;
 }
 
-.dropdown-submenu:hover > .dropdown-menu {
+.dropdown-submenu:hover>.dropdown-menu {
     display: block;
 }
 
-.dropdown-submenu > a:after {
+.dropdown-submenu>a:after {
     display: block;
     content: " ";
     float: right;
@@ -431,7 +449,7 @@ MOBILE SOURCE MENU MODAL LIST
     margin-right: -10px;
 }
 
-.dropdown-submenu:hover > a:after {
+.dropdown-submenu:hover>a:after {
     border-left-color: #fff;
 }
 
@@ -439,13 +457,14 @@ MOBILE SOURCE MENU MODAL LIST
     float: none;
 }
 
-.dropdown-submenu.pull-left > .dropdown-menu {
+.dropdown-submenu.pull-left>.dropdown-menu {
     left: -100%;
     margin-left: 10px;
     -webkit-border-radius: 6px 0 6px 6px;
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
 }
+
 
 /********************************************************
 CONTROL BAR CSS NEEDS TO MOVE INTO THE CONTROL BAR
@@ -528,17 +547,20 @@ CONTROL BAR CSS NEEDS TO MOVE INTO THE CONTROL BAR
     padding: 0px;
 }
 
-.list-group{
+.list-group {
     margin-top: 30px;
 }
 
-.download{
-    font-size:16px;
+.download {
+    font-size: 16px;
 }
+
+
 /********************************************************
 Label offline information
 *********************************************************/
-.list-group-item{
+
+.list-group-item {
     height: 40px;
     padding: 10px 15px;
 }
@@ -547,17 +569,19 @@ Label offline information
     font-size: 16px;
 }
 
+
 /********************************************************
 Download Messages
 *********************************************************/
-.alert.alert-warning{
+
+.alert.alert-warning {
     display: none;
 }
 
-.alert.alert-danger{
+.alert.alert-danger {
     display: none;
 }
 
-.alert.alert-success{
+.alert.alert-success {
     display: none;
 }
