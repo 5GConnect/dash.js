@@ -96,7 +96,7 @@ function HTTPLoader(cfg) {
         const request = config.request;
         const traces = [];
         let firstProgress = true;
-        let needFailureReport = false;
+        let needFailureReport = true;
         let requestStartTime = new Date();
         let lastTraceTime = requestStartTime;
         let lastTraceReceivedCount = 0;
@@ -152,7 +152,7 @@ function HTTPLoader(cfg) {
 
                     }
 
-                    remainingAttempts--;
+                    //remainingAttempts--;
                     let retryRequest = { config: config };
                     retryRequests.push(retryRequest);
                     retryRequest.timeout = setTimeout(function() {
