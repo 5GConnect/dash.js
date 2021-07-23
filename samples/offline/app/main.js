@@ -58,7 +58,9 @@ app.controller('DashController', function ($scope, $timeout, $q, sources, contri
 
 
     $scope.selectedItem = {
-        url: 'https://livesim.dashif.org/dash/vod/testpic_2s/multi_subs.mpd'
+        url: 'http://10.250.2.68/video/range.mpd'
+        //'https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd'
+        //'https://livesim.dashif.org/dash/vod/testpic_2s/multi_subs.mpd'
     };
 
     sources.query(function (data) {
@@ -410,6 +412,28 @@ app.controller('DashController', function ($scope, $timeout, $q, sources, contri
             updateMetrics('audio');
             $scope.chartCount++;
         }, $scope.updateMetricsInterval);
+
+        var eventPoller = setInterval(function () {
+            var streamInfo = $scope.player.getActiveStream().getStreamInfo();
+            var dashMetrics = $scope.player.getDashMetrics();
+            var dashAdapter = $scope.player.getDashAdapter();
+    
+            if (dashMetrics && streamInfo) {
+                const periodIdx = streamInfo.index;
+                var repSwitch = dashMetrics.getCurrentRepresentationSwitch('video', true);
+                var bufferLevel = dashMetrics.getCurrentBufferLevel('video', true);
+                var bitrate = repSwitch ? Math.round(dashAdapter.getBandwidthForRepresentation(repSwitch.to, periodIdx) / 1000) : NaN;
+                var adaptation = dashAdapter.getAdaptationForType(periodIdx, 'video', streamInfo)
+                var frameRate = adaptation.Representation_asArray.find(function (rep) {
+                    return rep.id === repSwitch.to
+                }).frameRate;
+                var bitrateInfo = $scope.player.getBitrateInfoListFor('video')[$scope.player.getQualityFor('video')]
+                document.getElementById('videoquality').innerText = `${bitrateInfo.width}x${bitrateInfo.height} px` 
+                document.getElementById('bufferLevel').innerText = bufferLevel + " secs";
+                document.getElementById('framerate').innerText = frameRate + " fps";
+                document.getElementById('reportedBitrate').innerText = bitrate + " Kbps";
+            }
+        }, 1000);
     }, $scope);
 
     $scope.player.on(dashjs.MediaPlayer.events.PLAYBACK_ENDED, function (e) { /* jshint ignore:line */

@@ -152,7 +152,7 @@ function HTTPLoader(cfg) {
 
                     }
 
-                    remainingAttempts--;
+                    //remainingAttempts--;
                     let retryRequest = { config: config };
                     retryRequests.push(retryRequest);
                     retryRequest.timeout = setTimeout(function () {
@@ -168,7 +168,7 @@ function HTTPLoader(cfg) {
                         return;
                     }
 
-                    errHandler.error(new DashJSError(downloadErrorToRequestTypeMap[request.type], request.url + ' is not available', {
+                    errHandler.error(new DashJSError(downloadErrorToRequestTypeMap[request.type], request.url + ' is not available.', {
                         request: request,
                         response: httpRequest.response
                     }));
