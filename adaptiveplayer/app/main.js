@@ -22,7 +22,7 @@ $(document).ready(function() {
 app.controller('DashController', function($scope) {
 
     $scope.selectedItem = {
-        url: 'http://10.250.2.68/video/range.mpd'
+        url: 'http://10.5.2.4/video/range.mpd'
     };
 
     $scope.chartOptions = {
