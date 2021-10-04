@@ -31,7 +31,7 @@ app.controller('DashController', function($scope, $timeout, $q, DownloadService)
 
 
     $scope.selectedItem = {
-        url: 'https://livesim.dashif.org/dash/vod/testpic_2s/multi_subs.mpd'
+        url: 'http://10.5.2.4/video/range.mpd'
     };
 
     $scope.chartOptions = {
