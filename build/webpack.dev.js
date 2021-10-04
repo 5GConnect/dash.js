@@ -16,7 +16,7 @@ const config = merge(common, {
     devServer: {
         contentBase: path.join(__dirname, '../'),
         open: true,
-        openPage: 'adaptiveplayer/index.html',
+        openPage: 'adaptive_mediaplayer/index.html',
         hot: true,
         compress: true,
         port: 3001,
